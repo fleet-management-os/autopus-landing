@@ -331,14 +331,26 @@ export default function Home() {
             See Autopus in action <span>↗</span>
           </a>
         </div>
-        <div className="story-visual" aria-hidden="true">
-          <div className="road-line one" />
-          <div className="road-line two" />
-          <div className="car-card">
-            <span>Vehicle 024</span>
-            <strong>Ready to rent</strong>
-            <small>Updated just now</small>
-          </div>
+        <div className="story-visual">
+          <img
+            className="cybertruck-image"
+            src="/autopus/cybertruck.png"
+            alt="Tesla Cybertruck parked on a rocky landscape"
+          />
+          <a
+            className="car-card"
+            href="https://www.autopus.app/login"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open example Tesla Cybertruck in Autopus"
+          >
+            <span>Vehicle 024 · Tesla Cybertruck</span>
+            <strong>Ready for next booking</strong>
+            <small>
+              Guest handoff ready <b>Open in Autopus ↗</b>
+            </small>
+          </a>
+          <div className="vehicle-tag">Example fleet vehicle</div>
         </div>
       </section>
 
