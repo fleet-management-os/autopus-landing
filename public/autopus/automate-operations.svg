@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="automate operations glass icon">
+<defs>
+  <linearGradient id="panel" x1="10" y1="90" x2="90" y2="10" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#0A0F1C"/>
+    <stop offset="1" stop-color="#182034"/>
+  </linearGradient>
+  <linearGradient id="rim" x1="8" y1="88" x2="88" y2="8" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#8B5CF6"/>
+    <stop offset="1" stop-color="#38BDF8"/>
+  </linearGradient>
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+    <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.42"/>
+    <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#635BFF" flood-opacity="0.25"/>
+  </filter>
+</defs>
+<rect x="8" y="8" width="80" height="80" rx="22" fill="url(#panel)" fill-opacity="0.78" stroke="url(#rim)" stroke-opacity="0.58" filter="url(#shadow)"/>
+<svg x="20" y="20" width="56" height="56" viewBox="0 0 64 64">
+
+<defs>
+  <linearGradient id="g" x1="8" y1="56" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#8B5CF6"/>
+    <stop offset="0.55" stop-color="#6C63FF"/>
+    <stop offset="1" stop-color="#38BDF8"/>
+  </linearGradient>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="2.2" result="blur"/>
+    <feFlood flood-color="#7C3AED" flood-opacity="0.5"/>
+    <feComposite in2="blur" operator="in"/>
+    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+  <g fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"><path d="M32 19v-8M32 53v-8M45 32h8M11 32h8M41.2 22.8l5.7-5.7M17.1 46.9l5.7-5.7M41.2 41.2l5.7 5.7M17.1 17.1l5.7 5.7"/><circle cx="32" cy="32" r="11"/></g>
+</svg>
+</svg>
