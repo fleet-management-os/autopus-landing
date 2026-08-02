@@ -1,26 +1,5 @@
-const valueCards = [
-  {
-    icon: "/autopus/automate-operations.svg",
-    kicker: "Less admin",
-    title: "Automate daily operations",
-    text: "Turn repeatable fleet work into reliable workflows—from guest handoffs and vehicle readiness to team follow-ups.",
-    tone: "blue",
-  },
-  {
-    icon: "/autopus/monthly-revenue.svg",
-    kicker: "More yield",
-    title: "Grow revenue intelligently",
-    text: "See what every vehicle is earning, spot underperformers early, and make faster pricing and utilization decisions.",
-    tone: "green",
-  },
-  {
-    icon: "/autopus/real-time-insights.svg",
-    kicker: "One clear view",
-    title: "Know what is happening now",
-    text: "Live performance signals replace scattered spreadsheets, so owners and operators can act with confidence.",
-    tone: "photo",
-  },
-];
+import MotionController from "./motion-controller";
+import ProductShowcase from "./product-showcase";
 
 const journey = [
   {
@@ -96,20 +75,18 @@ function Logo() {
 export default function Home() {
   return (
     <main id="top">
+      <MotionController />
       <header className="site-header">
         <Logo />
         <nav aria-label="Primary navigation">
           <a href="#platform">Platform</a>
-          <a href="#journey">How it works</a>
+          <a href="#platform">How it works</a>
           <a href="#results">Results</a>
           <a href="#faq">Resources</a>
         </nav>
         <div className="header-actions">
-          <a className="login-link" href="https://www.autopus.app/login">
-            Log in
-          </a>
-          <a className="pill pill-soft" href="#contact">
-            Book a demo <span>↗</span>
+          <a className="pill pill-soft" href="https://www.autopus.app/login">
+            Open Autopus <span>↗</span>
           </a>
         </div>
       </header>
@@ -127,78 +104,34 @@ export default function Home() {
           Automate operations, maximize utilization, and unlock real performance
           insights—so your rental business can scale with confidence.
         </p>
-        <a className="pill pill-primary" href="#contact">
-          Book a demo <span>→</span>
+        <a className="pill pill-primary" href="https://www.autopus.app/login">
+          Log in to Autopus <span>→</span>
         </a>
 
         <div className="hero-visual" aria-label="Autopus fleet performance preview">
           <div className="visual-orbit orbit-one" />
           <div className="visual-orbit orbit-two" />
-          <div className="dashboard-window">
-            <div className="window-bar">
-              <Logo />
-              <div className="window-nav">
-                <span className="active">Overview</span>
-                <span>Fleet</span>
-                <span>Operations</span>
-                <span>Reports</span>
-              </div>
-              <span className="avatar">KP</span>
-            </div>
-            <div className="dashboard-body">
-              <div className="dash-heading">
-                <div>
-                  <span className="micro">FLEET PERFORMANCE</span>
-                  <h2>Good morning, Kelly</h2>
-                </div>
-                <span className="live-dot">Live</span>
-              </div>
-              <div className="metric-grid">
-                <article>
-                  <img src="/autopus/occupancy-rate.svg" alt="" />
-                  <span>Occupancy rate</span>
-                  <strong>76%</strong>
-                  <small className="up">↗ 8.4% vs last month</small>
-                </article>
-                <article>
-                  <img src="/autopus/monthly-revenue.svg" alt="" />
-                  <span>Monthly revenue</span>
-                  <strong>$128,540</strong>
-                  <small className="up">↗ 12.6% vs last month</small>
-                </article>
-                <article>
-                  <img src="/autopus/active-vehicles.svg" alt="" />
-                  <span>Active vehicles</span>
-                  <strong>48</strong>
-                  <small className="up">↗ 6 vs last month</small>
-                </article>
-              </div>
-              <div className="chart-card">
-                <div className="chart-copy">
-                  <span className="micro">REVENUE TREND</span>
-                  <strong>$128.5k</strong>
-                  <small>Last 30 days</small>
-                </div>
-                <div className="chart" aria-hidden="true">
-                  <i style={{ height: "34%" }} />
-                  <i style={{ height: "48%" }} />
-                  <i style={{ height: "42%" }} />
-                  <i style={{ height: "61%" }} />
-                  <i style={{ height: "57%" }} />
-                  <i style={{ height: "76%" }} />
-                  <i style={{ height: "70%" }} />
-                  <i style={{ height: "88%" }} />
-                  <i style={{ height: "82%" }} />
-                  <i style={{ height: "96%" }} />
-                </div>
-              </div>
-            </div>
+          <div className="dashboard-window real-dashboard-window">
+            <img className="real-dashboard-image" src="/autopus/autopus-dashboard-real.png" alt="Autopus fleet owner dashboard showing revenue, profit, expenses, vehicle status, imports, and AI-assisted uploads" />
           </div>
         </div>
       </section>
 
+      <div className="signal-rail" aria-hidden="true">
+        <div className="signal-track">
+          <span>Automate operations</span><i>✦</i>
+          <span>See every signal</span><i>✦</i>
+          <span>Optimize utilization</span><i>✦</i>
+          <span>Scale with control</span><i>✦</i>
+          <span>Automate operations</span><i>✦</i>
+          <span>See every signal</span><i>✦</i>
+          <span>Optimize utilization</span><i>✦</i>
+          <span>Scale with control</span><i>✦</i>
+        </div>
+      </div>
+
       <section className="value-section" id="platform">
-        <div className="section-heading">
+        <div className="section-heading" data-reveal>
           <p className="kicker">One connected fleet</p>
           <h2>
             Smarter workflows,
@@ -206,42 +139,11 @@ export default function Home() {
             stronger <em>performance</em>
           </h2>
         </div>
-        <div className="value-grid">
-          {valueCards.map((card) => (
-            <article className={`value-card ${card.tone}`} key={card.title}>
-              <div className="card-art">
-                <img src={card.icon} alt="" />
-                {card.tone === "blue" && (
-                  <div className="task-stack">
-                    <span>Vehicle inspection</span>
-                    <span>Guest handoff</span>
-                    <span>Owner update</span>
-                  </div>
-                )}
-                {card.tone === "green" && (
-                  <div className="revenue-ring">
-                    <strong>+12.6%</strong>
-                    <span>month over month</span>
-                  </div>
-                )}
-                {card.tone === "photo" && (
-                  <div className="signal-panel">
-                    <span>Live fleet signal</span>
-                    <strong>42 / 48</strong>
-                    <small>vehicles currently utilized</small>
-                  </div>
-                )}
-              </div>
-              <p className="kicker">{card.kicker}</p>
-              <h3>{card.title}</h3>
-              <p>{card.text}</p>
-            </article>
-          ))}
-        </div>
+        <ProductShowcase />
       </section>
 
-      <section className="journey-section" id="journey">
-        <div className="section-heading split">
+      <section className="journey-section" id="journey" hidden>
+        <div className="section-heading split" data-reveal>
           <h2>
             From first vehicle to full fleet,
             <br />
@@ -267,6 +169,7 @@ export default function Home() {
               className={`journey-card ${item.accent}`}
               id={`step-${item.number}`}
               key={item.number}
+              data-reveal
             >
               <div>
                 <span className="number">{item.number}</span>
@@ -284,12 +187,12 @@ export default function Home() {
       </section>
 
       <section className="results-section" id="results">
-        <div className="section-heading">
+        <div className="section-heading" data-reveal>
           <h2>
             The <em>power</em> of a connected fleet
           </h2>
         </div>
-        <div className="results-grid">
+        <div className="results-grid" data-reveal>
           <article className="result-feature">
             <div>
               <span className="kicker">Fleet visibility</span>
@@ -319,7 +222,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="story-section">
+      <section className="story-section" data-reveal>
         <div className="story-card">
           <span className="kicker">Made for modern operators</span>
           <h2>Run more. View more. Earn more.</h2>
@@ -355,7 +258,7 @@ export default function Home() {
       </section>
 
       <section className="faq-section" id="faq">
-        <div className="section-heading split">
+        <div className="section-heading split" data-reveal>
           <h2>
             Everything you need
             <br />
@@ -363,7 +266,7 @@ export default function Home() {
           </h2>
           <p>Clear answers for rental operators evaluating a better way to run.</p>
         </div>
-        <div className="faq-list">
+        <div className="faq-list" data-reveal>
           {faqs.map((item, index) => (
             <details key={item.q} open={index === 0}>
               <summary>
@@ -377,7 +280,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="cta-section" id="contact">
+      <section className="cta-section" id="contact" data-reveal>
         <div>
           <span className="kicker">Ready to take control?</span>
           <h2>
