@@ -372,7 +372,7 @@ export default function ProductShowcase() {
             anticipatePin: 1,
             invalidateOnRefresh: true,
             snap: {
-              snapTo: ScrollTrigger.snapDirectional(1 / (features.length - 1)),
+              snapTo: 1 / (features.length - 1),
               duration: { min: 0.22, max: 0.5 },
               delay: 0.08,
               ease: "power2.inOut",
