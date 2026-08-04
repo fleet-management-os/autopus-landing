@@ -91,28 +91,36 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="hero">
-        <div className="eyebrow-row" aria-label="Product capabilities">
-          <span>Fleet operations</span>
-          <span>Real-time insights</span>
-          <span>Revenue performance</span>
-        </div>
-        <h1>
-          The operating system for <em>modern fleets</em>
-        </h1>
-        <p className="hero-copy">
-          Automate operations, maximize utilization, and unlock real performance
-          insights—so your rental business can scale with confidence.
-        </p>
-        <a className="pill pill-primary" href="https://www.autopus.app/login">
-          Log in to Autopus <span>→</span>
-        </a>
-
-        <div className="hero-visual" aria-label="Autopus fleet performance preview">
-          <div className="visual-orbit orbit-one" />
-          <div className="visual-orbit orbit-two" />
-          <div className="dashboard-window real-dashboard-window">
-            <img className="real-dashboard-image" src="/autopus/autopus-dashboard-real.png" alt="Autopus fleet owner dashboard showing revenue, profit, expenses, vehicle status, imports, and AI-assisted uploads" />
+      <section className="hero hero-video" aria-label="Autopus fleet operations">
+        <video
+          className="hero-video-media"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="/autopus/hero-fleet-poster.jpg"
+          aria-hidden="true"
+        >
+          <source src="/autopus/hero-fleet.mp4" type="video/mp4" />
+        </video>
+        <div className="hero-video-shade" aria-hidden="true" />
+        <div className="hero-video-content">
+          <div className="hero-heading-block">
+            <p className="hero-kicker">Autopus / Fleet operations</p>
+            <h1 aria-label="The operating system for modern fleets">
+              <span className="hero-title-line"><span>The operating system</span></span>
+              <span className="hero-title-line"><span>for <em>modern fleets</em></span></span>
+            </h1>
+          </div>
+          <div className="hero-side-copy">
+            <p>
+              Automate operations, maximize utilization, and turn every fleet
+              signal into confident growth.
+            </p>
+            <a className="hero-video-link" href="https://www.autopus.app/login">
+              Open Autopus <span>↗</span>
+            </a>
           </div>
         </div>
       </section>

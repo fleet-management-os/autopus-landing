@@ -14,6 +14,7 @@ export default function MotionController() {
     const updateScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const progress = max > 0 ? window.scrollY / max : 0;
+      root.classList.toggle("is-scrolled", window.scrollY > 28);
       root.style.setProperty("--scroll-progress", String(progress));
       root.style.setProperty(
         "--hero-shift",
