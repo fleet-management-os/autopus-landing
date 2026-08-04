@@ -244,18 +244,18 @@ export default function Home() {
         </div>
         <div className="story-visual">
           <img
-            className="cybertruck-image"
-            src="/autopus/cybertruck.png"
-            alt="Tesla Cybertruck parked on a rocky landscape"
+            className="fleet-vehicle-image"
+            src="/autopus/hero-fleet-poster.jpg"
+            alt="Fleet vehicles ready for their next booking"
           />
           <a
             className="car-card"
             href="https://www.autopus.app/login"
             target="_blank"
             rel="noreferrer"
-            aria-label="Open example Tesla Cybertruck in Autopus"
+            aria-label="Open example fleet vehicle in Autopus"
           >
-            <span>Vehicle 024 · Tesla Cybertruck</span>
+            <span>Vehicle 024 · Toyota Sienna</span>
             <strong>Ready for next booking</strong>
             <small>
               Guest handoff ready <b>Open in Autopus ↗</b>
