@@ -203,7 +203,7 @@ function UploadPanel({ kind, setKind, photoSrc, photoName, onPhotoChange }: { ki
       </div>
       <div className="recent-upload-table">
         <div><strong>Recent uploads</strong><span>1 upload</span></div>
-        <article><span>Jul 26, 2026</span><b>Northstar Mobility</b><span>{kind === "toll" ? "Toll" : kind === "expense" ? "Expense" : "Receipt"}</span><span>Subaru Forester · 123ABC</span><strong>{kind === "toll" ? "$48.00" : "$147.00"}</strong><i>Reviewed</i></article>
+        <article><span>Jul 26, 2026</span><b>Daniel Reyes</b><span>{kind === "toll" ? "Toll" : kind === "expense" ? "Expense" : "Receipt"}</span><span>Subaru Forester · 123ABC</span><strong>{kind === "toll" ? "$48.00" : "$147.00"}</strong><i>Reviewed</i></article>
       </div>
       <p className="demo-hint">Try it · switch the document type</p>
     </div>
@@ -211,13 +211,15 @@ function UploadPanel({ kind, setKind, photoSrc, photoName, onPhotoChange }: { ki
 }
 
 const initialVehicles = [
-  { id: 1, name: "2022 Toyota Sienna", make: "toyota", owner: "Northstar Mobility", plate: "7G2C236", miles: "12,480", trips: 18, status: "Active", service: "Sep 18", image: tripVehicleImage },
-  { id: 2, name: "2023 Subaru Forester", make: "subaru", owner: "North Coast Mobility", plate: "123ABC", miles: "77,927", trips: 42, status: "Active", service: "Aug 28", image: "https://images.unsplash.com/photo-1687048985980-bcf332f600c1?auto=format&fit=crop&w=560&q=82" },
-  { id: 3, name: "2024 Toyota RAV4", make: "toyota", owner: "Kelly Fleet LLC", plate: "8EVX204", miles: "31,204", trips: 36, status: "Active", service: "Oct 04", image: "https://images.unsplash.com/photo-1687048985980-bcf332f600c1?auto=format&fit=crop&w=560&q=82" },
-  { id: 4, name: "2022 BMW X3", make: "bmw", owner: "Sunset Auto Group", plate: "9BMW821", miles: "54,110", trips: 29, status: "Maintenance", service: "In service", image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=560&q=82" },
-  { id: 5, name: "2021 Subaru Forester", make: "subaru", owner: "Northstar Mobility", plate: "6SBR420", miles: "68,840", trips: 51, status: "Active", service: "Sep 02", image: "https://images.unsplash.com/photo-1552009385-fc97b944d70c?auto=format&fit=crop&w=560&q=82" },
-  { id: 6, name: "2024 BMW X5", make: "bmw", owner: "North Coast Mobility", plate: "4BMW925", miles: "22,905", trips: 21, status: "Inactive", service: "Oct 21", image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=560&q=82" },
+  { id: 1, name: "2022 Toyota Sienna", make: "toyota", owner: "Marcus Hale", plate: "7G2C236", miles: "12,480", trips: 18, status: "Active", service: "Sep 18", image: tripVehicleImage },
+  { id: 2, name: "2023 Subaru Forester", make: "subaru", owner: "Daniel Reyes", plate: "123ABC", miles: "77,927", trips: 42, status: "Active", service: "Aug 28", image: "https://images.unsplash.com/photo-1687048985980-bcf332f600c1?auto=format&fit=crop&w=560&q=82" },
+  { id: 3, name: "2024 Toyota RAV4", make: "toyota", owner: "Kelly Nguyen", plate: "8EVX204", miles: "31,204", trips: 36, status: "Active", service: "Oct 04", image: "https://images.unsplash.com/photo-1687048985980-bcf332f600c1?auto=format&fit=crop&w=560&q=82" },
+  { id: 4, name: "2022 BMW X3", make: "bmw", owner: "Sofia Alvarez", plate: "9BMW821", miles: "54,110", trips: 29, status: "Maintenance", service: "In service", image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=560&q=82" },
+  { id: 5, name: "2021 Subaru Forester", make: "subaru", owner: "Marcus Hale", plate: "6SBR420", miles: "68,840", trips: 51, status: "Active", service: "Sep 02", image: "https://images.unsplash.com/photo-1552009385-fc97b944d70c?auto=format&fit=crop&w=560&q=82" },
+  { id: 6, name: "2024 BMW X5", make: "bmw", owner: "Daniel Reyes", plate: "4BMW925", miles: "22,905", trips: 21, status: "Inactive", service: "Oct 21", image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=560&q=82" },
 ];
+
+const ownerInitials = (name: string) => name.split(" ").map((part) => part[0]).join("").slice(0, 2);
 
 function VehiclesPanel({ photoSrc, photoName, onPhotoChange }: PhotoProps) {
   const [vehicles, setVehicles] = useState(initialVehicles);
@@ -228,7 +230,7 @@ function VehiclesPanel({ photoSrc, photoName, onPhotoChange }: PhotoProps) {
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState("2025 Toyota Sienna");
   const [newPlate, setNewPlate] = useState("NEW001");
-  const [newOwner, setNewOwner] = useState("Northstar Mobility");
+  const [newOwner, setNewOwner] = useState("Marcus Hale");
 
   const filteredVehicles = vehicles.filter((vehicle) =>
     (statusFilter === "all" || vehicle.status.toLowerCase() === statusFilter) &&
@@ -237,7 +239,7 @@ function VehiclesPanel({ photoSrc, photoName, onPhotoChange }: PhotoProps) {
   );
 
   const addVehicle = () => {
-    setVehicles((current) => [...current, { id: Date.now(), name: newName || "New fleet vehicle", make: newName.toLowerCase().includes("subaru") ? "subaru" : newName.toLowerCase().includes("bmw") ? "bmw" : "toyota", owner: newOwner || "Northstar Mobility", plate: newPlate || "NEW001", miles: "0", trips: 0, status: "Active", service: "Not scheduled", image: photoSrc || tripVehicleImage }]);
+    setVehicles((current) => [...current, { id: Date.now(), name: newName || "New fleet vehicle", make: newName.toLowerCase().includes("subaru") ? "subaru" : newName.toLowerCase().includes("bmw") ? "bmw" : "toyota", owner: newOwner || "Marcus Hale", plate: newPlate || "NEW001", miles: "0", trips: 0, status: "Active", service: "Not scheduled", image: photoSrc || tripVehicleImage }]);
     setAdding(false);
   };
 
@@ -276,9 +278,9 @@ function AssistantPanel() {
 
 function OwnersPanel({ status, setStatus }: { status: ReportStatus; setStatus: (status: ReportStatus) => void }) {
   const rows = [
-    ["North Coast Mobility", "$4,280.16", "Ready"],
-    ["Kelly Fleet LLC", "$3,842.90", "Ready"],
-    ["Sunset Auto Group", "$2,190.44", "Review"],
+    ["Daniel Reyes", "$4,280.16", "Ready"],
+    ["Kelly Nguyen", "$3,842.90", "Ready"],
+    ["Sofia Alvarez", "$2,190.44", "Review"],
   ];
   const visibleRows = status === "ready" ? rows.filter((row) => row[2] === "Ready") : rows;
 
@@ -290,12 +292,12 @@ function OwnersPanel({ status, setStatus }: { status: ReportStatus; setStatus: (
       </div>
       <div className="report-master-table">
         <div><span>Vehicle</span><span>Owner</span><span>Revenue</span><span>Expenses</span><span>Mgmt fee</span><span>Owner payout</span></div>
-        <article><strong>2023 Subaru Forester</strong><span>Northstar Mobility</span><span>$4,280.16</span><span>$147.00</span><span>$642.02</span><strong>$3,491.14</strong></article>
+        <article><strong>2023 Subaru Forester</strong><span>Daniel Reyes</span><span>$4,280.16</span><span>$147.00</span><span>$642.02</span><strong>$3,491.14</strong></article>
       </div>
       <div className="payout-heading"><div><span className="app-overline">PAYOUTS</span><strong>$10,313.50 outstanding</strong></div><div className="table-controls" role="group" aria-label="Statement status"><button className={status === "all" ? "active" : ""} onClick={() => setStatus("all")}>All</button><button className={status === "ready" ? "active" : ""} onClick={() => setStatus("ready")}>Ready</button></div></div>
       <div className="owner-table">
         {visibleRows.map(([owner, amount, rowStatus]) => (
-          <article key={owner}><span className="owner-avatar">{owner[0]}</span><strong>{owner}</strong><span>{amount}</span><b className={rowStatus.toLowerCase()}>{rowStatus}</b></article>
+          <article key={owner}><span className="owner-avatar">{ownerInitials(owner)}</span><strong>{owner}</strong><span>{amount}</span><b className={rowStatus.toLowerCase()}>{rowStatus}</b></article>
         ))}
       </div>
       <p className="demo-hint">Try it · filter statements by status</p>
@@ -422,8 +424,8 @@ function PhonePreview({
               <button className={status === "ready" ? "active" : ""} onClick={() => setStatus("ready")}>Ready</button>
             </div>
             <div className="phone-payout"><span>Payout due</span><strong>$10,313.50</strong><small>2 statements ready to send</small></div>
-            <div className="phone-owner-row"><i>K</i><div><strong>Kelly Fleet LLC</strong><small>$3,842.90</small></div><b>Ready</b></div>
-            {status === "all" && <div className="phone-owner-row"><i>S</i><div><strong>Sunset Auto Group</strong><small>$2,190.44</small></div><b className="review">Review</b></div>}
+            <div className="phone-owner-row"><i>KN</i><div><strong>Kelly Nguyen</strong><small>$3,842.90</small></div><b>Ready</b></div>
+            {status === "all" && <div className="phone-owner-row"><i>SA</i><div><strong>Sofia Alvarez</strong><small>$2,190.44</small></div><b className="review">Review</b></div>}
           </div>
         )}
 
