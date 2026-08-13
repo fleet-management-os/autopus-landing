@@ -20,7 +20,7 @@ const deployedUrl =
 const metadataBase = new URL(
   deployedUrl.startsWith("http") ? deployedUrl : `https://${deployedUrl}`,
 );
-const title = "Autopus — The operating system for modern fleets";
+const title = "Autopus — The AI operating system for running fleets at scale";
 const description =
   "Automate fleet operations, maximize utilization, and unlock real performance insights with Autopus.";
 

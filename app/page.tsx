@@ -108,9 +108,9 @@ export default function Home() {
         <div className="hero-video-content">
           <div className="hero-heading-block">
             <p className="hero-kicker">Autopus / Fleet operations</p>
-            <h1 aria-label="The operating system for modern fleets">
-              <span className="hero-title-line"><span>The operating system</span></span>
-              <span className="hero-title-line"><span>for <em>modern fleets</em></span></span>
+            <h1 aria-label="The AI operating system for running fleets at scale">
+              <span className="hero-title-line"><span>The AI operating system</span></span>
+              <span className="hero-title-line"><span>for <em>running fleets at scale.</em></span></span>
             </h1>
           </div>
           <div className="hero-side-copy">
@@ -308,7 +308,7 @@ export default function Home() {
       <footer>
         <div className="footer-top">
           <Logo />
-          <p>The operating system for modern fleets.</p>
+          <p>The AI operating system for running fleets at scale.</p>
           <div className="footer-links">
             <a href="#platform">Platform</a>
             <a href="#journey">How it works</a>
