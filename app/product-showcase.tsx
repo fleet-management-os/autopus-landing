@@ -47,7 +47,7 @@ const chartSets = {
 };
 
 type FeatureId = "dispatch" | "performance" | "vehicles" | "uploads" | "owners";
-type AppView = FeatureId | "vehicles" | "inbox" | "assistant";
+type AppView = FeatureId;
 type Metric = "profit" | "revenue";
 type UploadKind = "toll" | "expense" | "receipt";
 type ReportStatus = "all" | "ready";
@@ -268,14 +268,6 @@ function VehiclesPanel({ photoSrc, photoName, onPhotoChange }: PhotoProps) {
   );
 }
 
-function InboxPanel() {
-  return <div className="app-screen simple-app-screen"><div className="app-toolbar"><div><span className="app-overline">GUEST MESSAGES</span><h3>Inbox</h3></div><span className="month-chip">Sync now</span></div><div className="message-card"><span className="owner-avatar">JM</span><div><strong>Jordan Miles</strong><p>Can I pick up the vehicle thirty minutes earlier?</p></div><button>Draft reply</button></div><div className="message-card"><span className="owner-avatar">AS</span><div><strong>Alex Smith</strong><p>Thanks — I have uploaded the return photos.</p></div><button>View thread</button></div></div>;
-}
-
-function AssistantPanel() {
-  return <div className="app-screen simple-app-screen"><div className="app-toolbar"><div><span className="app-overline">AUTOPUS AI</span><h3>Assistant</h3></div><span className="status-chip">Online</span></div><div className="assistant-prompt"><span>✦</span><div><strong>What needs attention today?</strong><p>2 vehicles need inspection, 1 receipt is ready for review, and 3 owner statements can be finalized.</p></div></div><div className="assistant-actions"><button>Review inspections</button><button>Open receipt</button><button>Finalize statements</button></div></div>;
-}
-
 function OwnersPanel({ status, setStatus }: { status: ReportStatus; setStatus: (status: ReportStatus) => void }) {
   const rows = [
     ["Daniel Reyes", "$4,280.16", "Ready"],
@@ -351,7 +343,7 @@ function PhonePreview({
     <div className="phone-device">
       <div className="phone-speaker" />
       <div className="phone-screen">
-        <div className={`phone-header ${active === "dispatch" ? "dispatch-phone-header" : ""}`}><strong>{active === "dispatch" ? "My Trips" : active === "performance" ? "Northstar" : active === "uploads" ? "Uploads" : active === "owners" ? "Reports" : active === "vehicles" ? "Vehicles" : active === "inbox" ? "Inbox" : "Assistant"}</strong>{active !== "dispatch" && <img src="/autopus/autopus-symbol.png" alt="" />}</div>
+        <div className={`phone-header ${active === "dispatch" ? "dispatch-phone-header" : ""}`}><strong>{active === "dispatch" ? "My Trips" : active === "performance" ? "Northstar" : active === "uploads" ? "Uploads" : active === "owners" ? "Reports" : "Vehicles"}</strong>{active !== "dispatch" && <img src="/autopus/autopus-symbol.png" alt="" />}</div>
 
         {active === "dispatch" && (
           <div className="phone-view phone-dispatch-view">
@@ -438,10 +430,6 @@ function PhonePreview({
             </div>
           </div>
         )}
-
-        {active === "inbox" && <div className="phone-view"><span className="phone-overline">GUEST MESSAGES</span><h4>Inbox</h4><div className="phone-owner-row"><i>JM</i><div><strong>Jordan Miles</strong><small>Can I pick up earlier?</small></div><b>Reply</b></div><div className="phone-owner-row"><i>AS</i><div><strong>Alex Smith</strong><small>Return photos uploaded</small></div><b>Open</b></div></div>}
-
-        {active === "assistant" && <div className="phone-view"><span className="phone-overline">AUTOPUS AI</span><h4>Today</h4><div className="phone-payout"><span>Needs attention</span><strong>3 tasks</strong><small>Inspections, receipt, statements</small></div></div>}
 
         <nav className="phone-nav" aria-label="Mobile product preview">
           {active === "dispatch" ? <><button className="active" onClick={() => setActive("dispatch")}><span>▣</span>My Trips</button><button><span>⚙</span>Settings</button></> : <>
@@ -599,11 +587,9 @@ export default function ProductShowcase() {
               <span className="mini-label">WORKSPACE</span>
               <button className={appView === "dispatch" ? "active" : ""} onClick={() => setAppView("dispatch")}>Dispatch</button>
               <button className={appView === "performance" ? "active" : ""} onClick={() => setAppView("performance")}>Fleet overview</button>
-              <button className={appView === "inbox" ? "active" : ""} onClick={() => setAppView("inbox")}>Inbox</button>
               <button className={appView === "vehicles" ? "active" : ""} onClick={() => setAppView("vehicles")}>Vehicles</button>
               <button className={appView === "uploads" ? "active" : ""} onClick={() => setAppView("uploads")}>Uploads</button>
               <button className={appView === "owners" ? "active" : ""} onClick={() => setAppView("owners")}>Reports</button>
-              <button className={appView === "assistant" ? "active" : ""} onClick={() => setAppView("assistant")}>AI assistant</button>
             </aside>
             <div className="app-content">
               {appView === "dispatch" && <DispatchPanel mode={tripMode} setMode={setTripMode} prepComplete={prepComplete} setPrepComplete={setPrepComplete} checkoutComplete={checkoutComplete} setCheckoutComplete={setCheckoutComplete} pickupLocation={pickupLocation} setPickupLocation={setPickupLocation} reports={tripReports} setReports={setTripReports} checkoutNote={checkoutNote} setCheckoutNote={setCheckoutNote} dateIndex={dateIndex} shiftDate={shiftDate} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} />}
@@ -611,8 +597,6 @@ export default function ProductShowcase() {
               {appView === "uploads" && <UploadPanel kind={kind} setKind={setKind} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} />}
               {appView === "owners" && <OwnersPanel status={status} setStatus={setStatus} />}
               {appView === "vehicles" && <VehiclesPanel photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} />}
-              {appView === "inbox" && <InboxPanel />}
-              {appView === "assistant" && <AssistantPanel />}
             </div>
           </div>
           <PhonePreview active={appView} setActive={setAppView} metric={metric} setMetric={setMetric} kind={kind} setKind={setKind} status={status} setStatus={setStatus} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} mode={tripMode} setMode={setTripMode} prepComplete={prepComplete} setPrepComplete={setPrepComplete} checkoutComplete={checkoutComplete} setCheckoutComplete={setCheckoutComplete} pickupLocation={pickupLocation} reports={tripReports} setReports={setTripReports} checkoutNote={checkoutNote} setCheckoutNote={setCheckoutNote} dateIndex={dateIndex} shiftDate={shiftDate} />
