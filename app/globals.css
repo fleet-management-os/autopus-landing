@@ -3490,3 +3490,23 @@ footer { background: var(--paper); }
   .dispatch-card-top img { width: 70px; }
   .trip-time { grid-column: 1 / -1; display: flex; justify-content: space-between; }
 }
+
+/* More open typography across the marketing site. */
+h1 { letter-spacing: -0.035em; line-height: 1; }
+.hero.hero-video h1 { letter-spacing: -0.028em; line-height: 0.94; }
+.hero.hero-video h1 em { letter-spacing: -0.008em; word-spacing: 0.035em; white-space: nowrap; }
+.section-heading h2,
+.story-card h2,
+.cta-section h2 { letter-spacing: -0.03em; line-height: 1.04; }
+.value-card h3,
+.journey-card h3,
+.feature-selector strong,
+.faq-list summary { letter-spacing: -0.018em; }
+.results-grid article strong,
+.journey-metric strong,
+.metric-grid strong { letter-spacing: -0.025em; }
+
+@media (max-width: 680px) {
+  .hero.hero-video h1 { letter-spacing: -0.02em; line-height: 0.96; }
+  .hero.hero-video h1 em { letter-spacing: 0; }
+}

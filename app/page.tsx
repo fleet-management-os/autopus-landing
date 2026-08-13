@@ -110,7 +110,7 @@ export default function Home() {
             <p className="hero-kicker">Autopus / Fleet operations</p>
             <h1 aria-label="The AI operating system for running fleets at scale">
               <span className="hero-title-line"><span>The AI operating system</span></span>
-              <span className="hero-title-line"><span>for <em>running fleets at scale.</em></span></span>
+              <span className="hero-title-line"><span>for running <em>fleets at scale.</em></span></span>
             </h1>
           </div>
           <div className="hero-side-copy">
