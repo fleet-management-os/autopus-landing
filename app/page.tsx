@@ -44,6 +44,27 @@ const journey = [
   },
 ];
 
+const sienna = "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=320&q=80";
+const forester = "https://images.unsplash.com/photo-1687048985980-bcf332f600c1?auto=format&fit=crop&w=320&q=80";
+const bmw = "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=320&q=80";
+const subaru = "https://images.unsplash.com/photo-1552009385-fc97b944d70c?auto=format&fit=crop&w=320&q=80";
+
+const managedVehicles = [
+  { name: "2022 Toyota Sienna", plate: "7G2C236", status: "On rent", image: sienna },
+  { name: "2023 Subaru Forester", plate: "123ABC", status: "On rent", image: forester },
+  { name: "2022 BMW X3", plate: "9BMW821", status: "In service", image: bmw },
+  { name: "2021 Subaru Forester", plate: "6SBR420", status: "Ready", image: subaru },
+  { name: "2024 Toyota RAV4", plate: "8EVX204", status: "Ready", image: forester },
+  { name: "2024 BMW X5", plate: "4BMW925", status: "Cleaning", image: bmw },
+  { name: "2023 Toyota Sienna", plate: "5TYS118", status: "On rent", image: sienna },
+  { name: "2022 Subaru Outback", plate: "2SBO907", status: "Ready", image: subaru },
+  { name: "2023 BMW X1", plate: "7BMW340", status: "On rent", image: bmw },
+];
+
+// Two copies keep the vertical loop seamless: the animation shifts by exactly one
+// copy, and the viewport is capped to one copy so the seam never shows.
+const streamCopies = [0, 1];
+
 const faqs = [
   {
     q: "What is Autopus?",
@@ -66,7 +87,7 @@ const faqs = [
 function Logo() {
   return (
     <a className="brand" href="#top" aria-label="Autopus home">
-      <img src="/autopus/autopus-symbol.png" alt="" />
+      <img src="/autopus/autopus-symbol-road.png" alt="" />
       <span>Autopus</span>
     </a>
   );
@@ -212,20 +233,35 @@ export default function Home() {
               next decision with confidence.”
             </div>
           </article>
-          <article>
-            <span className="kicker">Monthly revenue</span>
-            <strong>$128.5k</strong>
-            <p>Performance signals in one clear view</p>
-          </article>
-          <article>
+          <article className="result-metric-fleet">
             <span className="kicker">Active fleet</span>
-            <strong>48</strong>
+            <strong>148</strong>
             <p>Vehicles managed from the same operating system</p>
           </article>
-          <article>
+          <article className="result-metric-growth">
             <span className="kicker">Revenue movement</span>
             <strong>+12.6%</strong>
             <p>Month-over-month growth in the product preview</p>
+          </article>
+          <article className="result-fleet-stream">
+            <span className="kicker">Under management</span>
+            <p>Every vehicle, live in one operating view</p>
+            <div className="fleet-stream-viewport" aria-hidden="true">
+              <div className="fleet-stream-track">
+                {streamCopies.map((copy) =>
+                  managedVehicles.map((vehicle) => (
+                    <div className="fleet-stream-card" key={`${copy}-${vehicle.plate}`}>
+                      <img src={vehicle.image} alt="" loading="lazy" />
+                      <div>
+                        <strong>{vehicle.name}</strong>
+                        <small>{vehicle.plate}</small>
+                      </div>
+                      <i className={vehicle.status.toLowerCase().replace(" ", "-")}>{vehicle.status}</i>
+                    </div>
+                  )),
+                )}
+              </div>
+            </div>
           </article>
         </div>
       </section>

@@ -29,8 +29,8 @@ export const metadata: Metadata = {
   title,
   description,
   icons: {
-    icon: "/autopus/autopus-symbol.png",
-    shortcut: "/autopus/autopus-symbol.png",
+    icon: "/autopus/autopus-symbol-road.png",
+    shortcut: "/autopus/autopus-symbol-road.png",
   },
   openGraph: {
     title,

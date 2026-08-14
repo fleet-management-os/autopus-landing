@@ -49,7 +49,8 @@ const chartSets = {
 type FeatureId = "dispatch" | "performance" | "vehicles" | "uploads" | "owners";
 type AppView = FeatureId;
 type Metric = "profit" | "revenue";
-type UploadKind = "toll" | "expense" | "receipt";
+type UploadKind = "expense" | "ticket" | "toll";
+type ScanStage = "idle" | "scanning" | "done";
 type ReportStatus = "all" | "ready";
 type TripMode = "checkin" | "checkout";
 type TripReports = { refuel: boolean; miles: boolean; damage: boolean };
@@ -171,41 +172,97 @@ type PhotoProps = {
   onPhotoChange: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-function UploadPanel({ kind, setKind, photoSrc, photoName, onPhotoChange }: { kind: UploadKind; setKind: (kind: UploadKind) => void } & PhotoProps) {
+const uploadKinds: { id: UploadKind; label: string; short: string }[] = [
+  { id: "expense", label: "Expense", short: "Expense" },
+  { id: "ticket", label: "Tickets", short: "Ticket" },
+  { id: "toll", label: "Tolls", short: "Toll" },
+];
+
+const scanDocument = {
+  file: "valvoline-invoice-85632.jpg",
+  image: "/autopus/scan-sample-invoice.jpg?v=3",
+  vendor: "Valvoline Instant Oil Change",
+  location: "Burien, WA",
+  reference: "Invoice 85632",
+  date: "Jul 14, 2026",
+  vehicle: "2022 BMW X3 · 9BMW821",
+  owner: "Sofia Alvarez",
+  odometer: "97,771 mi",
+  service: "European full synthetic oil change",
+  subtotal: "$112.63",
+  tax: "$11.71",
+  total: "$124.34",
+};
+
+type ScanProps = { scanStage: ScanStage; startScan: () => void };
+
+function UploadPanel({ kind, setKind, scanStage, startScan }: { kind: UploadKind; setKind: (kind: UploadKind) => void } & ScanProps) {
+  const kindLabel = uploadKinds.find((item) => item.id === kind)?.short ?? "Expense";
+  const scanned = scanStage === "done";
+
   return (
     <div className="app-screen uploads-screen">
       <div className="app-toolbar">
-        <div><span className="app-overline">DOCUMENT INTAKE</span><h3>Uploads</h3><p className="app-subtitle">Toll & ticket documents, vehicle expenses and filed receipts</p></div>
+        <div><span className="app-overline">DOCUMENT INTAKE</span><h3>Uploads</h3><p className="app-subtitle">Vehicle expenses, parking tickets and toll documents</p></div>
       </div>
       <div className="segmented upload-type-tabs" role="group" aria-label="Upload type">
-        <button className={kind === "toll" ? "active" : ""} onClick={() => setKind("toll")}>Toll / ticket</button>
-        <button className={kind === "expense" ? "active" : ""} onClick={() => setKind("expense")}>Expense</button>
-        <button className={kind === "receipt" ? "active" : ""} onClick={() => setKind("receipt")}>Receipt</button>
+        {uploadKinds.map((item) => (
+          <button key={item.id} className={kind === item.id ? "active" : ""} onClick={() => setKind(item.id)}>{item.label}</button>
+        ))}
       </div>
       <div className="upload-layout">
         <div className="upload-card">
-          <strong>Upload a {kind === "toll" ? "toll / ticket" : kind}</strong>
-          <label className={`drop-zone ${photoSrc ? "has-photo" : ""}`}>
-            <input type="file" accept="image/png,image/jpeg,image/webp" onChange={onPhotoChange} />
-            {photoSrc ? <img src={photoSrc} alt="Uploaded preview" /> : <span>＋</span>}
-            <strong>{photoSrc ? photoName : "Drop a file or click to upload"}</strong>
-            <small>{photoSrc ? "Photo added · click to replace" : "PNG or JPEG · up to 5 MB"}</small>
-          </label>
-          <div className="ai-row"><span>✦ Autopus AI will extract the details</span><b>Qwen 3.6⌄</b></div>
+          <strong>Scan a document</strong>
+          <div className={`scan-frame stage-${scanStage}`}>
+            <img src={scanDocument.image} alt="Oil change invoice ready to scan" />
+            {scanStage === "scanning" && <span className="scan-beam" aria-hidden="true" />}
+            {scanned && <span className="scan-badge">✓ Scanned</span>}
+          </div>
+          <div className="scan-file"><b>{scanDocument.file}</b><small>JPEG · 812 KB</small></div>
+          <button className="scan-action" onClick={startScan} disabled={scanStage === "scanning"}>
+            {scanStage === "idle" ? "✦ Scan with Autopus AI" : scanStage === "scanning" ? "Reading document…" : "↻ Scan again"}
+          </button>
+          <div className="ai-row"><span>✦ Autopus AI reads the document for you</span><b>Qwen 3.6⌄</b></div>
         </div>
-        <div className="upload-guidelines">
-          <strong>Upload guidelines</strong>
-          <span>✓ Select the owner before uploading</span>
-          <span>✓ Add amount and notes when available</span>
-          <span>✓ Review extracted values before confirming</span>
-          <span>✓ PNG and JPEG supported for AI extraction</span>
+        <div className={`scan-result stage-${scanStage}`}>
+          {scanStage === "idle" && (
+            <div className="upload-guidelines">
+              <strong>What Autopus pulls out</strong>
+              <span>✓ Vendor, date and reference number</span>
+              <span>✓ Matching vehicle and owner</span>
+              <span>✓ Line items, tax and total</span>
+              <span>✓ Review the values, then confirm</span>
+            </div>
+          )}
+          {scanStage === "scanning" && (
+            <div className="scan-progress">
+              <strong>Reading document…</strong>
+              <i /><i /><i /><i /><i />
+              <small>Matching the invoice to a vehicle in your fleet</small>
+            </div>
+          )}
+          {scanned && (
+            <div className="scan-fields">
+              <div className="scan-fields-head"><strong>Extracted details</strong><b>Filed as {kindLabel}</b></div>
+              <dl>
+                <div><dt>Vendor</dt><dd>{scanDocument.vendor}<small>{scanDocument.location}</small></dd></div>
+                <div><dt>Document</dt><dd>{scanDocument.reference}<small>{scanDocument.date}</small></dd></div>
+                <div><dt>Vehicle</dt><dd>{scanDocument.vehicle}<small>{scanDocument.owner} · {scanDocument.odometer}</small></dd></div>
+                <div><dt>Service</dt><dd>{scanDocument.service}</dd></div>
+                <div><dt>Subtotal</dt><dd>{scanDocument.subtotal}<small>Tax {scanDocument.tax}</small></dd></div>
+                <div className="scan-total"><dt>Total</dt><dd>{scanDocument.total}</dd></div>
+              </dl>
+              <button className="generate-button">Confirm and file</button>
+            </div>
+          )}
         </div>
       </div>
       <div className="recent-upload-table">
-        <div><strong>Recent uploads</strong><span>1 upload</span></div>
-        <article><span>Jul 26, 2026</span><b>Daniel Reyes</b><span>{kind === "toll" ? "Toll" : kind === "expense" ? "Expense" : "Receipt"}</span><span>Subaru Forester · 123ABC</span><strong>{kind === "toll" ? "$48.00" : "$147.00"}</strong><i>Reviewed</i></article>
+        <div><strong>Recent uploads</strong><span>{scanned ? "2 uploads" : "1 upload"}</span></div>
+        {scanned && <article className="fresh-upload"><span>{scanDocument.date}</span><b>{scanDocument.owner}</b><span>{kindLabel}</span><span>BMW X3 · 9BMW821</span><strong>{scanDocument.total}</strong><i className="pending">Needs review</i></article>}
+        <article><span>Jul 26, 2026</span><b>Daniel Reyes</b><span>Expense</span><span>Subaru Forester · 123ABC</span><strong>$147.00</strong><i>Reviewed</i></article>
       </div>
-      <p className="demo-hint">Try it · switch the document type</p>
+      <p className="demo-hint">Try it · scan the document, then switch how it is filed</p>
     </div>
   );
 }
@@ -214,7 +271,7 @@ const initialVehicles = [
   { id: 1, name: "2022 Toyota Sienna", make: "toyota", owner: "Marcus Hale", plate: "7G2C236", miles: "12,480", trips: 18, status: "Active", service: "Sep 18", image: tripVehicleImage },
   { id: 2, name: "2023 Subaru Forester", make: "subaru", owner: "Daniel Reyes", plate: "123ABC", miles: "77,927", trips: 42, status: "Active", service: "Aug 28", image: "https://images.unsplash.com/photo-1687048985980-bcf332f600c1?auto=format&fit=crop&w=560&q=82" },
   { id: 3, name: "2024 Toyota RAV4", make: "toyota", owner: "Kelly Nguyen", plate: "8EVX204", miles: "31,204", trips: 36, status: "Active", service: "Oct 04", image: "https://images.unsplash.com/photo-1687048985980-bcf332f600c1?auto=format&fit=crop&w=560&q=82" },
-  { id: 4, name: "2022 BMW X3", make: "bmw", owner: "Sofia Alvarez", plate: "9BMW821", miles: "54,110", trips: 29, status: "Maintenance", service: "In service", image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=560&q=82" },
+  { id: 4, name: "2022 BMW X3", make: "bmw", owner: "Sofia Alvarez", plate: "9BMW821", miles: "97,771", trips: 29, status: "Maintenance", service: "In service", image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=560&q=82" },
   { id: 5, name: "2021 Subaru Forester", make: "subaru", owner: "Marcus Hale", plate: "6SBR420", miles: "68,840", trips: 51, status: "Active", service: "Sep 02", image: "https://images.unsplash.com/photo-1552009385-fc97b944d70c?auto=format&fit=crop&w=560&q=82" },
   { id: 6, name: "2024 BMW X5", make: "bmw", owner: "Daniel Reyes", plate: "4BMW925", miles: "22,905", trips: 21, status: "Inactive", service: "Oct 21", image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=560&q=82" },
 ];
@@ -306,8 +363,9 @@ function PhonePreview({
   setKind,
   status,
   setStatus,
+  scanStage,
+  startScan,
   photoSrc,
-  photoName,
   onPhotoChange,
   mode,
   setMode,
@@ -331,7 +389,7 @@ function PhonePreview({
   setKind: (kind: UploadKind) => void;
   status: ReportStatus;
   setStatus: (status: ReportStatus) => void;
-} & PhotoProps & Omit<DispatchProps, "photoSrc" | "photoName" | "onPhotoChange" | "setPickupLocation">) {
+} & ScanProps & PhotoProps & Omit<DispatchProps, "photoSrc" | "photoName" | "onPhotoChange" | "setPickupLocation">) {
   const [mobileVehicles, setMobileVehicles] = useState(initialVehicles.slice(0, 4));
 
   const addMobileVehicle = () => {
@@ -343,7 +401,7 @@ function PhonePreview({
     <div className="phone-device">
       <div className="phone-speaker" />
       <div className="phone-screen">
-        <div className={`phone-header ${active === "dispatch" ? "dispatch-phone-header" : ""}`}><strong>{active === "dispatch" ? "My Trips" : active === "performance" ? "Northstar" : active === "uploads" ? "Uploads" : active === "owners" ? "Reports" : "Vehicles"}</strong>{active !== "dispatch" && <img src="/autopus/autopus-symbol.png" alt="" />}</div>
+        <div className={`phone-header ${active === "dispatch" ? "dispatch-phone-header" : ""}`}><strong>{active === "dispatch" ? "My Trips" : active === "performance" ? "Northstar" : active === "uploads" ? "Uploads" : active === "owners" ? "Reports" : "Vehicles"}</strong>{active !== "dispatch" && <img src="/autopus/autopus-symbol-road.png" alt="" />}</div>
 
         {active === "dispatch" && (
           <div className="phone-view phone-dispatch-view">
@@ -394,16 +452,24 @@ function PhonePreview({
             <span className="phone-overline">AI DOCUMENT INTAKE</span>
             <h4>New upload</h4>
             <div className="phone-segmented" role="group" aria-label="Mobile upload type">
-              <button className={kind === "toll" ? "active" : ""} onClick={() => setKind("toll")}>Toll</button>
-              <button className={kind === "expense" ? "active" : ""} onClick={() => setKind("expense")}>Expense</button>
-              <button className={kind === "receipt" ? "active" : ""} onClick={() => setKind("receipt")}>Receipt</button>
+              {uploadKinds.map((item) => (
+                <button key={item.id} className={kind === item.id ? "active" : ""} onClick={() => setKind(item.id)}>{item.short}</button>
+              ))}
             </div>
-            <label className={`phone-drop ${photoSrc ? "has-photo" : ""}`}>
-              <input type="file" accept="image/png,image/jpeg,image/webp" onChange={onPhotoChange} />
-              {photoSrc ? <img src={photoSrc} alt="Uploaded document preview" /> : <span>＋</span>}
-              <strong>{photoSrc ? photoName : "Add a photo"}</strong><small>{photoSrc ? "Added · tap to replace" : "Autopus AI fills the details"}</small>
-            </label>
-            <div className="phone-upload-result"><i>✓</i><div><strong>{kind === "toll" ? "FasTrak toll" : kind === "expense" ? "Auto repair" : "Filed receipt"}</strong><small>Matched to vehicle 123ABC</small></div><b>Ready</b></div>
+            <button className={`phone-scan stage-${scanStage}`} onClick={startScan} disabled={scanStage === "scanning"}>
+              <img src={scanDocument.image} alt="Oil change invoice ready to scan" />
+              {scanStage === "scanning" && <i className="phone-scan-beam" aria-hidden="true" />}
+              <span>{scanStage === "idle" ? "✦ Scan document" : scanStage === "scanning" ? "Reading…" : "✓ Scanned · tap to redo"}</span>
+            </button>
+            {scanStage === "done" ? (
+              <div className="phone-scan-fields">
+                <div><span>Vendor</span><b>Valvoline · Burien</b></div>
+                <div><span>Vehicle</span><b>BMW X3 · 9BMW821</b></div>
+                <div><span>Total</span><b>{scanDocument.total}</b></div>
+              </div>
+            ) : (
+              <div className="phone-upload-result"><i>✦</i><div><strong>Autopus AI fills the details</strong><small>Vendor, vehicle, tax and total</small></div><b>{scanStage === "scanning" ? "Reading" : "Ready"}</b></div>
+            )}
           </div>
         )}
 
@@ -451,7 +517,8 @@ export default function ProductShowcase() {
   const [active, setActive] = useState<FeatureId>("dispatch");
   const [appView, setAppView] = useState<AppView>("dispatch");
   const [metric, setMetric] = useState<Metric>("revenue");
-  const [kind, setKind] = useState<UploadKind>("toll");
+  const [kind, setKind] = useState<UploadKind>("expense");
+  const [scanStage, setScanStage] = useState<ScanStage>("idle");
   const [status, setStatus] = useState<ReportStatus>("all");
   const [photoSrc, setPhotoSrc] = useState<string | null>(null);
   const [photoName, setPhotoName] = useState("vehicle-photo.jpg");
@@ -464,6 +531,18 @@ export default function ProductShowcase() {
   const [dateIndex, setDateIndex] = useState(1);
 
   const shiftDate = (direction: number) => setDateIndex((current) => Math.min(tripDates.length - 1, Math.max(0, current + direction)));
+
+  const scanTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const startScan = () => {
+    if (scanTimer.current) clearTimeout(scanTimer.current);
+    setScanStage("scanning");
+    scanTimer.current = setTimeout(() => setScanStage("done"), 2200);
+  };
+
+  useEffect(() => () => {
+    if (scanTimer.current) clearTimeout(scanTimer.current);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -579,11 +658,11 @@ export default function ProductShowcase() {
       <div className="showcase-step-progress" aria-hidden="true"><i /><span>Scroll to explore · <b>{features.findIndex((item) => item.id === active) + 1}</b> / {features.length}</span></div>
       <div className="product-stage" id={`panel-${active}`} role="tabpanel">
         <div className="stage-glow" />
-        <p className="device-instruction"><span>Interactive preview</span> Use either screen. Every navigation item and upload control works.</p>
+        <p className="device-instruction"><span>Interactive preview</span> Use either screen. Every navigation item and the document scan work.</p>
         <div className="device-composition">
           <div className="app-shell desktop-device">
             <aside aria-label="Desktop product preview navigation">
-              <div className="mini-brand"><img src="/autopus/autopus-symbol.png" alt="" /><b>Autopus</b></div>
+              <div className="mini-brand"><img src="/autopus/autopus-symbol-road.png" alt="" /><b>Autopus</b></div>
               <span className="mini-label">WORKSPACE</span>
               <button className={appView === "dispatch" ? "active" : ""} onClick={() => setAppView("dispatch")}>Dispatch</button>
               <button className={appView === "performance" ? "active" : ""} onClick={() => setAppView("performance")}>Fleet overview</button>
@@ -594,12 +673,12 @@ export default function ProductShowcase() {
             <div className="app-content">
               {appView === "dispatch" && <DispatchPanel mode={tripMode} setMode={setTripMode} prepComplete={prepComplete} setPrepComplete={setPrepComplete} checkoutComplete={checkoutComplete} setCheckoutComplete={setCheckoutComplete} pickupLocation={pickupLocation} setPickupLocation={setPickupLocation} reports={tripReports} setReports={setTripReports} checkoutNote={checkoutNote} setCheckoutNote={setCheckoutNote} dateIndex={dateIndex} shiftDate={shiftDate} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} />}
               {appView === "performance" && <PerformancePanel metric={metric} setMetric={setMetric} />}
-              {appView === "uploads" && <UploadPanel kind={kind} setKind={setKind} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} />}
+              {appView === "uploads" && <UploadPanel kind={kind} setKind={setKind} scanStage={scanStage} startScan={startScan} />}
               {appView === "owners" && <OwnersPanel status={status} setStatus={setStatus} />}
               {appView === "vehicles" && <VehiclesPanel photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} />}
             </div>
           </div>
-          <PhonePreview active={appView} setActive={setAppView} metric={metric} setMetric={setMetric} kind={kind} setKind={setKind} status={status} setStatus={setStatus} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} mode={tripMode} setMode={setTripMode} prepComplete={prepComplete} setPrepComplete={setPrepComplete} checkoutComplete={checkoutComplete} setCheckoutComplete={setCheckoutComplete} pickupLocation={pickupLocation} reports={tripReports} setReports={setTripReports} checkoutNote={checkoutNote} setCheckoutNote={setCheckoutNote} dateIndex={dateIndex} shiftDate={shiftDate} />
+          <PhonePreview active={appView} setActive={setAppView} metric={metric} setMetric={setMetric} kind={kind} setKind={setKind} status={status} setStatus={setStatus} scanStage={scanStage} startScan={startScan} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} mode={tripMode} setMode={setTripMode} prepComplete={prepComplete} setPrepComplete={setPrepComplete} checkoutComplete={checkoutComplete} setCheckoutComplete={setCheckoutComplete} pickupLocation={pickupLocation} reports={tripReports} setReports={setTripReports} checkoutNote={checkoutNote} setCheckoutNote={setCheckoutNote} dateIndex={dateIndex} shiftDate={shiftDate} />
         </div>
       </div>
     </div>
