@@ -327,43 +327,71 @@ function VehiclesPanel({ photoSrc, photoName, onPhotoChange }: PhotoProps) {
 
 const ownerReports = {
   "Daniel Reyes": {
-    amount: "$4,280.16",
     status: "Ready",
-    vehicles: 2,
-    trips: 63,
+    paid: true,
+    paidDate: "8/10/2026",
+    trips: 8,
     revenue: "$5,120.40",
     expenses: "$198.00",
     fee: "$642.24",
+    ownerRevenue: "$4,478.16",
     payout: "$4,280.16",
-    lines: [
-      { vehicle: "2023 Subaru Forester", plate: "123ABC", revenue: "$4,280.16", expenses: "$147.00", fee: "$642.02", payout: "$3,491.14" },
-      { vehicle: "2024 BMW X5", plate: "4BMW925", revenue: "$840.24", expenses: "$51.00", fee: "$0.22", payout: "$789.02" },
+    tripsDetail: [
+      { date: "8/3/2026", vehicle: "2023 Subaru Forester", guest: "Maya K.", revenue: "$720.40", ownerRevenue: "$630.35" },
+      { date: "8/7/2026", vehicle: "2024 BMW X5", guest: "Noah T.", revenue: "$812.30", ownerRevenue: "$710.76" },
+      { date: "8/9/2026", vehicle: "2023 Subaru Forester", guest: "Sofia R.", revenue: "$458.20", ownerRevenue: "$400.93" },
+      { date: "8/12/2026", vehicle: "2024 BMW X5", guest: "Liam P.", revenue: "$512.70", ownerRevenue: "$448.61" },
+      { date: "8/16/2026", vehicle: "2023 Subaru Forester", guest: "Emma C.", revenue: "$576.50", ownerRevenue: "$504.44" },
+      { date: "8/20/2026", vehicle: "2023 Subaru Forester", guest: "Mason D.", revenue: "$639.80", ownerRevenue: "$559.83" },
+      { date: "8/24/2026", vehicle: "2024 BMW X5", guest: "Mia K.", revenue: "$587.80", ownerRevenue: "$514.33" },
+      { date: "8/29/2026", vehicle: "2023 Subaru Forester", guest: "Ethan S.", revenue: "$812.70", ownerRevenue: "$708.91" },
+    ],
+    vehicles: [
+      { name: "2023 Subaru Forester", trips: 5, revenue: "$3,207.60", expenses: "$147.00", fee: "$402.24", payout: "$2,658.36" },
+      { name: "2024 BMW X5", trips: 3, revenue: "$1,912.80", expenses: "$51.00", fee: "$240.00", payout: "$1,621.80" },
     ],
   },
   "Kelly Nguyen": {
-    amount: "$3,842.90",
     status: "Ready",
-    vehicles: 1,
-    trips: 36,
+    paid: true,
+    paidDate: "8/10/2026",
+    trips: 6,
     revenue: "$4,610.00",
     expenses: "$186.10",
     fee: "$581.00",
+    ownerRevenue: "$4,029.00",
     payout: "$3,842.90",
-    lines: [
-      { vehicle: "2024 Toyota RAV4", plate: "8EVX204", revenue: "$4,610.00", expenses: "$186.10", fee: "$581.00", payout: "$3,842.90" },
+    tripsDetail: [
+      { date: "8/4/2026", vehicle: "2024 Toyota RAV4", guest: "Ava M.", revenue: "$812.00", ownerRevenue: "$709.70" },
+      { date: "8/8/2026", vehicle: "2024 Toyota RAV4", guest: "Noah T.", revenue: "$764.50", ownerRevenue: "$668.14" },
+      { date: "8/14/2026", vehicle: "2024 Toyota RAV4", guest: "Liam P.", revenue: "$690.20", ownerRevenue: "$603.24" },
+      { date: "8/19/2026", vehicle: "2024 Toyota RAV4", guest: "Emma C.", revenue: "$742.80", ownerRevenue: "$649.20" },
+      { date: "8/23/2026", vehicle: "2024 Toyota RAV4", guest: "Mason D.", revenue: "$810.40", ownerRevenue: "$708.30" },
+      { date: "8/28/2026", vehicle: "2024 Toyota RAV4", guest: "Mia K.", revenue: "$790.10", ownerRevenue: "$690.42" },
+    ],
+    vehicles: [
+      { name: "2024 Toyota RAV4", trips: 6, revenue: "$4,610.00", expenses: "$186.10", fee: "$581.00", payout: "$3,842.90" },
     ],
   },
   "Sofia Alvarez": {
-    amount: "$2,190.44",
     status: "Review",
-    vehicles: 1,
-    trips: 29,
+    paid: false,
+    paidDate: null,
+    trips: 5,
     revenue: "$2,760.00",
     expenses: "$214.56",
     fee: "$355.00",
+    ownerRevenue: "$2,405.00",
     payout: "$2,190.44",
-    lines: [
-      { vehicle: "2022 BMW X3", plate: "9BMW821", revenue: "$2,760.00", expenses: "$214.56", fee: "$355.00", payout: "$2,190.44" },
+    tripsDetail: [
+      { date: "8/5/2026", vehicle: "2022 BMW X3", guest: "Sophia R.", revenue: "$512.40", ownerRevenue: "$446.50" },
+      { date: "8/11/2026", vehicle: "2022 BMW X3", guest: "Liam P.", revenue: "$498.20", ownerRevenue: "$434.12" },
+      { date: "8/17/2026", vehicle: "2022 BMW X3", guest: "Emma C.", revenue: "$560.80", ownerRevenue: "$488.70" },
+      { date: "8/22/2026", vehicle: "2022 BMW X3", guest: "Mason D.", revenue: "$604.10", ownerRevenue: "$526.40" },
+      { date: "8/27/2026", vehicle: "2022 BMW X3", guest: "Ethan S.", revenue: "$584.50", ownerRevenue: "$509.28" },
+    ],
+    vehicles: [
+      { name: "2022 BMW X3", trips: 5, revenue: "$2,760.00", expenses: "$214.56", fee: "$355.00", payout: "$2,190.44" },
     ],
   },
 } as const;
@@ -376,29 +404,92 @@ function OwnerReportModal({ owner, onClose }: { owner: OwnerName; onClose: () =>
   return (
     <div className="owner-report-layer" onClick={onClose} role="presentation">
       <article className="owner-report" onClick={(event) => event.stopPropagation()} role="dialog" aria-label={`${owner} August statement`}>
-        <header>
-          <div>
-            <span>AUTOPUS · OWNER STATEMENT</span>
-            <strong>{owner}</strong>
-            <small>August 2026 · {report.vehicles} vehicle{report.vehicles > 1 ? "s" : ""} · {report.trips} trips</small>
+        <header className="statement-hero">
+          <div className="statement-brand">
+            <img src="/autopus/autopus-symbol-road.png" alt="" />
+            <strong>Autopus</strong>
+          </div>
+          <p>Statement period: August 2026</p>
+          <div className="statement-prepared">
+            <span>Prepared for</span>
+            <b>{owner}</b>
+            <small>Northstar Mobility</small>
           </div>
           <button type="button" onClick={onClose} aria-label="Close statement">✕</button>
         </header>
-        <div className="owner-report-metrics">
-          <div><span>Revenue</span><b>{report.revenue}</b></div>
-          <div><span>Expenses</span><b>{report.expenses}</b></div>
-          <div><span>Mgmt fee</span><b>{report.fee}</b></div>
-          <div className="payout"><span>Owner payout</span><b>{report.payout}</b></div>
+
+        <div className="statement-kpis">
+          <div className="statement-payout">
+            <span>Owner payout</span>
+            <b>{report.payout}</b>
+            <i className={report.paid ? "paid" : "due"}>{report.paid ? "Paid" : "Review"}</i>
+          </div>
+          <div><b>{report.trips}</b><span>Trips</span></div>
+          <div><b>{report.revenue}</b><span>Revenue</span></div>
+          <div><b>{report.fee}</b><span>Mgmt fee</span></div>
         </div>
-        <div className="owner-report-lines">
-          <div><span>Vehicle</span><span>Revenue</span><span>Expenses</span><span>Fee</span><span>Payout</span></div>
-          {report.lines.map((line) => (
-            <div key={line.plate}><strong>{line.vehicle}<small>{line.plate}</small></strong><span>{line.revenue}</span><span>{line.expenses}</span><span>{line.fee}</span><b>{line.payout}</b></div>
-          ))}
+
+        <div className="statement-split">
+          <section>
+            <h4>Prepared for</h4>
+            <strong>{owner}</strong>
+            <small>August owner statement</small>
+          </section>
+          <section>
+            <h4>Breakdown</h4>
+            <ul>
+              <li><span>Revenue</span><b>{report.revenue}</b></li>
+              <li><span>Expenses</span><b>{report.expenses}</b></li>
+              <li><span>Mgmt fee</span><b>{report.fee}</b></li>
+              <li><span>Owner payout</span><b>{report.payout}</b></li>
+            </ul>
+          </section>
         </div>
+
+        <section className="statement-block">
+          <h4>Trip detail</h4>
+          <div className="statement-table trip-table">
+            <div><span>End date</span><span>Vehicle</span><span>Guest</span><span>Revenue</span><span>Owner revenue</span></div>
+            {report.tripsDetail.map((trip) => (
+              <div key={`${trip.date}-${trip.guest}`}>
+                <span>{trip.date}</span>
+                <span>{trip.vehicle}</span>
+                <span>{trip.guest}</span>
+                <span>{trip.revenue}</span>
+                <b>{trip.ownerRevenue}</b>
+              </div>
+            ))}
+            <div className="statement-total">
+              <span>Total</span>
+              <span />
+              <span />
+              <span>{report.revenue}</span>
+              <b>{report.ownerRevenue}</b>
+            </div>
+          </div>
+          <p className="statement-note">Owner revenue = Revenue − Mgmt fee. Owner payout = Owner revenue − Expenses.</p>
+        </section>
+
+        <section className="statement-block">
+          <h4>Vehicles</h4>
+          <div className="statement-table vehicle-table">
+            <div><span>Vehicle</span><span>Trips</span><span>Revenue</span><span>Expenses</span><span>Mgmt fee</span><span>Owner payout</span></div>
+            {report.vehicles.map((vehicle) => (
+              <div key={vehicle.name}>
+                <span>{vehicle.name}</span>
+                <span>{vehicle.trips}</span>
+                <span>{vehicle.revenue}</span>
+                <span>{vehicle.expenses}</span>
+                <span>{vehicle.fee}</span>
+                <b>{vehicle.payout}</b>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <footer>
-          <span className={report.status.toLowerCase()}>{report.status} to send</span>
-          <button type="button" className="generate-button">Send statement</button>
+          <small>{report.paidDate ? `Paid ${report.paidDate}.` : "Pending review before payout."}</small>
+          <button type="button" className="generate-button">{report.paid ? "Resend statement" : "Send statement"}</button>
         </footer>
       </article>
     </div>

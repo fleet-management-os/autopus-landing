@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, Instrument_Serif } from "next/font/google";
+import { DM_Sans, Instrument_Serif, Sora } from "next/font/google";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -11,6 +11,12 @@ const instrumentSerif = Instrument_Serif({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: "400",
+});
+
+const sora = Sora({
+  variable: "--font-logo",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 const deployedUrl =
@@ -51,7 +57,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${instrumentSerif.variable}`}>
+        <body className={`${dmSans.variable} ${instrumentSerif.variable} ${sora.variable}`}>
         {children}
       </body>
     </html>

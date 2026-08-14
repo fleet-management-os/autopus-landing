@@ -1,5 +1,7 @@
+import LiveFleetCount from "./live-fleet-count";
 import MotionController from "./motion-controller";
 import ProductShowcase from "./product-showcase";
+import RollingNumber from "./rolling-number";
 
 const journey = [
   {
@@ -50,15 +52,15 @@ const bmw = "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=form
 const subaru = "https://images.unsplash.com/photo-1552009385-fc97b944d70c?auto=format&fit=crop&w=320&q=80";
 
 const managedVehicles = [
-  { name: "2022 Toyota Sienna", plate: "7G2C236", status: "On rent", image: sienna },
-  { name: "2023 Subaru Forester", plate: "123ABC", status: "On rent", image: forester },
-  { name: "2022 BMW X3", plate: "9BMW821", status: "In service", image: bmw },
-  { name: "2021 Subaru Forester", plate: "6SBR420", status: "Ready", image: subaru },
-  { name: "2024 Toyota RAV4", plate: "8EVX204", status: "Ready", image: forester },
-  { name: "2024 BMW X5", plate: "4BMW925", status: "Cleaning", image: bmw },
-  { name: "2023 Toyota Sienna", plate: "5TYS118", status: "On rent", image: sienna },
-  { name: "2022 Subaru Outback", plate: "2SBO907", status: "Ready", image: subaru },
-  { name: "2023 BMW X1", plate: "7BMW340", status: "On rent", image: bmw },
+  { name: "2022 Toyota Sienna", trips: 18, status: "On rent", image: sienna },
+  { name: "2023 Subaru Forester", trips: 42, status: "On rent", image: forester },
+  { name: "2022 BMW X3", trips: 29, status: "In service", image: bmw },
+  { name: "2021 Subaru Forester", trips: 51, status: "Ready", image: subaru },
+  { name: "2024 Toyota RAV4", trips: 36, status: "Ready", image: forester },
+  { name: "2024 BMW X5", trips: 21, status: "Cleaning", image: bmw },
+  { name: "2023 Toyota Sienna", trips: 14, status: "On rent", image: sienna },
+  { name: "2022 Subaru Outback", trips: 33, status: "Ready", image: subaru },
+  { name: "2023 BMW X1", trips: 27, status: "On rent", image: bmw },
 ];
 
 // Two copies keep the vertical loop seamless: the animation shifts by exactly one
@@ -72,7 +74,7 @@ const faqs = [
   },
   {
     q: "Which metrics can my team track?",
-    a: "The product experience highlights occupancy rate, monthly revenue, and active vehicle count, with trend context that helps teams understand what changed and where to focus.",
+    a: "The product experience highlights vehicles under management, trips processed, and 24/7 coverage — more than one full-time fleet manager working 8 hours a day.",
   },
   {
     q: "How does Autopus help a fleet scale?",
@@ -88,7 +90,7 @@ function Logo() {
   return (
     <a className="brand" href="#top" aria-label="Autopus home">
         <img src="/autopus/autopus-symbol-road.png" alt="" />
-        <span className="brand-name">Autopus</span>
+      <span className="brand-name" aria-hidden="true"><i className="brand-a" />UTOPUS</span>
     </a>
   );
 }
@@ -225,9 +227,9 @@ export default function Home() {
         <div className="results-grid" data-reveal>
           <article className="result-feature">
             <div>
-              <span className="kicker">Fleet visibility</span>
-              <strong>76%</strong>
-              <p>Occupancy rate, visible at a glance and paired with trend context.</p>
+              <span className="kicker">Vehicles managed</span>
+              <LiveFleetCount />
+              <p>The fleet Autopus is running right now.</p>
             </div>
             <div className="result-quote">
               “One real-time view gives every operator the context to make the
@@ -235,14 +237,14 @@ export default function Home() {
             </div>
           </article>
           <article className="result-metric-fleet">
-            <span className="kicker">Active fleet</span>
-            <strong>148</strong>
-            <p>Vehicles managed from the same operating system</p>
+            <span className="kicker">Trips processed</span>
+            <RollingNumber value={4000} suffix="+" label="Over 4,000 trips processed" />
+            <p>Completed through Autopus</p>
           </article>
           <article className="result-metric-growth">
-            <span className="kicker">Revenue movement</span>
-            <strong>+12.6%</strong>
-            <p>Month-over-month growth in the product preview</p>
+            <span className="kicker">Always on</span>
+            <RollingNumber value={24} suffix="/7" label="24/7 monitoring" />
+            <p>More than one full-time fleet manager at 8 hours a day.</p>
           </article>
           <article className="result-fleet-stream">
             <span className="kicker">Under management</span>
@@ -251,11 +253,11 @@ export default function Home() {
               <div className="fleet-stream-track">
                 {streamCopies.map((copy) =>
                   managedVehicles.map((vehicle) => (
-                    <div className="fleet-stream-card" key={`${copy}-${vehicle.plate}`}>
+                    <div className="fleet-stream-card" key={`${copy}-${vehicle.name}-${vehicle.trips}`}>
                       <img src={vehicle.image} alt="" loading="lazy" />
                       <div>
                         <strong>{vehicle.name}</strong>
-                        <small>{vehicle.plate}</small>
+                        <small>{vehicle.trips} trips</small>
                       </div>
                       <i className={vehicle.status.toLowerCase().replace(" ", "-")}>{vehicle.status}</i>
                     </div>
