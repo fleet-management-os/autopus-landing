@@ -243,7 +243,7 @@ export default function Home() {
           </article>
           <article className="result-metric-growth">
             <span className="kicker">Always on</span>
-            <RollingNumber value={24} suffix="/7" label="24/7 monitoring" />
+            <strong aria-label="24/7 monitoring">24/7</strong>
             <p>More than one full-time fleet manager at 8 hours a day.</p>
           </article>
           <article className="result-fleet-stream">

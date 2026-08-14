@@ -924,62 +924,6 @@ em {
   font-variant-numeric: tabular-nums;
 }
 
-.slot-number {
-  display: inline-flex;
-  align-items: baseline;
-  line-height: 1;
-  letter-spacing: -0.06em;
-}
-
-.slot-reel {
-  display: inline-block;
-  height: 1em;
-  width: 0.58em;
-  overflow: hidden;
-  vertical-align: baseline;
-}
-
-.slot-reel.is-spinning .slot-strip {
-  will-change: transform;
-}
-
-.slot-strip {
-  display: flex;
-  flex-direction: column;
-}
-
-.slot-strip i {
-  display: block;
-  height: 1em;
-  line-height: 1;
-  font-style: normal;
-  font-weight: inherit;
-  text-align: center;
-  letter-spacing: -0.06em;
-}
-
-.slot-sep {
-  display: inline-block;
-  line-height: 1;
-  padding: 0 0.01em;
-}
-
-.result-metric-fleet .slot-number,
-.result-metric-growth .slot-number {
-  letter-spacing: -0.02em;
-  gap: 0.04em;
-}
-
-.result-metric-fleet .slot-reel,
-.result-metric-growth .slot-reel {
-  width: 0.7em;
-}
-
-.result-metric-fleet .slot-strip i,
-.result-metric-growth .slot-strip i {
-  letter-spacing: -0.02em;
-}
-
 .results-grid article p {
   max-width: 280px;
   color: #4f5459;

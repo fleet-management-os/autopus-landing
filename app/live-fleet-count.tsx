@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { SlotNumber } from "./rolling-number";
 
 const START = 118;
 const CAP = 148;
 
 export default function LiveFleetCount() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const valueRef = useRef(START);
   const started = useRef(false);
   const [value, setValue] = useState(START);
@@ -23,7 +22,7 @@ export default function LiveFleetCount() {
         valueRef.current += 1;
         setValue(valueRef.current);
         if (valueRef.current < CAP) bump();
-      }, 8000 + Math.random() * 9000);
+      }, 7000 + Math.random() * 10000);
     };
 
     const observer = new IntersectionObserver(
@@ -33,7 +32,7 @@ export default function LiveFleetCount() {
         observer.disconnect();
         bump();
       },
-      { threshold: 0.4 },
+      { threshold: 0.45 },
     );
 
     observer.observe(node);
@@ -44,8 +43,8 @@ export default function LiveFleetCount() {
   }, []);
 
   return (
-    <div ref={ref}>
-      <SlotNumber value={value} label={`${value} vehicles managed`} />
-    </div>
+    <strong ref={ref} className="rolling-number" aria-label={`${value} vehicles managed`}>
+      <span aria-hidden="true">{value}</span>
+    </strong>
   );
 }
