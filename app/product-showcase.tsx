@@ -93,11 +93,23 @@ function DispatchPanel({ mode, setMode, prepComplete, setPrepComplete, checkoutC
         <section className="dispatch-column attention">
           <header><div><strong>Needs attention</strong><b>{taskComplete ? 0 : 1}</b></div><span>Prep outstanding in the next / last 24 hours</span></header>
           {!taskComplete ? (
-            <article className="dispatch-card live-card">
-              <div className="dispatch-card-top">
+            <article className="dispatch-card">
+              <div className="dispatch-card-head">
+                <div>
+                  <span className="task-chip">{mode === "checkin" ? "CHECK-IN" : "CHECK-OUT"}</span>
+                  <span className="trip-id">#59513123</span>
+                </div>
+                <div className="trip-time">
+                  <small>{mode === "checkin" ? "Trip start" : "Returned"}</small>
+                  <b>{mode === "checkin" ? "Wed, Aug 5 · 10:00 AM" : "Thu, Aug 6 · 11:00 AM"}</b>
+                </div>
+              </div>
+              <div className="dispatch-card-vehicle">
                 <img src={tripVehicleImage} alt="Vehicle assigned to trip" />
-                <div><p><span className="task-chip">{mode === "checkin" ? "CHECK-IN" : "CHECK-OUT"}</span> <b>Trip ID: 59513123</b></p><strong>2022 Toyota Sienna</strong><small>VIN: 5TABCDE5NS012345</small></div>
-                <div className="trip-time"><small>{mode === "checkin" ? "TRIP START" : "RETURNED"}</small><b>{mode === "checkin" ? "Wed, Aug 5, 10:00 AM" : "Thu, Aug 6, 11:00 AM"}</b></div>
+                <div>
+                  <strong>2022 Toyota Sienna</strong>
+                  <small>Assigned to tester1</small>
+                </div>
               </div>
               <div className="dispatch-controls">
                 <label><span>Drop-off</span><select value={pickupLocation} onChange={(event) => setPickupLocation(event.target.value)}><option>— location not set —</option><option>Parking garage</option><option>Parking lot</option><option>Curbside</option></select></label>
@@ -120,8 +132,37 @@ function DispatchPanel({ mode, setMode, prepComplete, setPrepComplete, checkoutC
         </section>
         <section className="dispatch-column completed">
           <header><div><strong>Completed today</strong><b>{taskComplete ? 2 : 1}</b></div><span>Prep finished within the same 24-hour windows</span></header>
-          {taskComplete && <article className="dispatch-complete-card"><img src={tripVehicleImage} alt="Completed vehicle" /><div><p><span className="task-chip neutral">{mode === "checkin" ? "CHECK-IN" : "CHECK-OUT"}</span> <b>Trip ID: 59513123</b></p><strong>2022 Toyota Sienna</strong><small>VIN: 5TABCDE5NS012345</small></div><span className="complete-chip">✓ PREP COMPLETE</span>{mode === "checkout" && (reports.refuel || checkoutNote) && <div className="checkout-summary"><small>REPORTED AT CHECK-OUT</small>{reports.refuel && <b>⛽ NEEDS REFUEL</b>}{photoSrc && <span>Photo 1</span>}{checkoutNote && <p>{checkoutNote}</p>}</div>}<button onClick={() => mode === "checkin" ? setPrepComplete(false) : setCheckoutComplete(false)}>↶</button></article>}
-          <article className="dispatch-complete-card"><img src={tripVehicleImage} alt="Completed vehicle" /><div><p><span className="task-chip neutral">CHECK-IN</span> <b>Trip ID: 59123814</b></p><strong>2022 Toyota Sienna</strong><small>tester1 · Tue, Aug 4, 1:58 PM</small></div><span className="complete-chip">✓ PREP COMPLETE</span></article>
+          {taskComplete && (
+            <article className="dispatch-complete-card">
+              <img src={tripVehicleImage} alt="Completed vehicle" />
+              <div>
+                <p><span className="task-chip neutral">{mode === "checkin" ? "CHECK-IN" : "CHECK-OUT"}</span></p>
+                <strong>2022 Toyota Sienna</strong>
+                <small>#59513123 · tester1</small>
+              </div>
+              <div className="complete-side">
+                <span className="complete-chip">Prep complete</span>
+                <button type="button" onClick={() => mode === "checkin" ? setPrepComplete(false) : setCheckoutComplete(false)} aria-label="Undo completion">↶</button>
+              </div>
+              {mode === "checkout" && (reports.refuel || checkoutNote) && (
+                <div className="checkout-summary">
+                  <small>Reported at check-out</small>
+                  {reports.refuel && <b>Needs refuel</b>}
+                  {photoSrc && <span>Photo 1</span>}
+                  {checkoutNote && <p>{checkoutNote}</p>}
+                </div>
+              )}
+            </article>
+          )}
+          <article className="dispatch-complete-card">
+            <img src={tripVehicleImage} alt="Completed vehicle" />
+            <div>
+              <p><span className="task-chip neutral">CHECK-IN</span></p>
+              <strong>2022 Toyota Sienna</strong>
+              <small>#59123814 · tester1 · Tue, Aug 4</small>
+            </div>
+            <span className="complete-chip">Prep complete</span>
+          </article>
         </section>
       </div>
       <p className="demo-hint">Try it · switch task type, assign a location, report an issue, or complete the trip</p>
