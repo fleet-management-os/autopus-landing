@@ -325,8 +325,87 @@ function VehiclesPanel({ photoSrc, photoName, onPhotoChange }: PhotoProps) {
   );
 }
 
-function OwnersPanel({ status, setStatus }: { status: ReportStatus; setStatus: (status: ReportStatus) => void }) {
-  const rows = [
+const ownerReports = {
+  "Daniel Reyes": {
+    amount: "$4,280.16",
+    status: "Ready",
+    vehicles: 2,
+    trips: 63,
+    revenue: "$5,120.40",
+    expenses: "$198.00",
+    fee: "$642.24",
+    payout: "$4,280.16",
+    lines: [
+      { vehicle: "2023 Subaru Forester", plate: "123ABC", revenue: "$4,280.16", expenses: "$147.00", fee: "$642.02", payout: "$3,491.14" },
+      { vehicle: "2024 BMW X5", plate: "4BMW925", revenue: "$840.24", expenses: "$51.00", fee: "$0.22", payout: "$789.02" },
+    ],
+  },
+  "Kelly Nguyen": {
+    amount: "$3,842.90",
+    status: "Ready",
+    vehicles: 1,
+    trips: 36,
+    revenue: "$4,610.00",
+    expenses: "$186.10",
+    fee: "$581.00",
+    payout: "$3,842.90",
+    lines: [
+      { vehicle: "2024 Toyota RAV4", plate: "8EVX204", revenue: "$4,610.00", expenses: "$186.10", fee: "$581.00", payout: "$3,842.90" },
+    ],
+  },
+  "Sofia Alvarez": {
+    amount: "$2,190.44",
+    status: "Review",
+    vehicles: 1,
+    trips: 29,
+    revenue: "$2,760.00",
+    expenses: "$214.56",
+    fee: "$355.00",
+    payout: "$2,190.44",
+    lines: [
+      { vehicle: "2022 BMW X3", plate: "9BMW821", revenue: "$2,760.00", expenses: "$214.56", fee: "$355.00", payout: "$2,190.44" },
+    ],
+  },
+} as const;
+
+type OwnerName = keyof typeof ownerReports;
+
+function OwnerReportModal({ owner, onClose }: { owner: OwnerName; onClose: () => void }) {
+  const report = ownerReports[owner];
+
+  return (
+    <div className="owner-report-layer" onClick={onClose} role="presentation">
+      <article className="owner-report" onClick={(event) => event.stopPropagation()} role="dialog" aria-label={`${owner} August statement`}>
+        <header>
+          <div>
+            <span>AUTOPUS · OWNER STATEMENT</span>
+            <strong>{owner}</strong>
+            <small>August 2026 · {report.vehicles} vehicle{report.vehicles > 1 ? "s" : ""} · {report.trips} trips</small>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close statement">✕</button>
+        </header>
+        <div className="owner-report-metrics">
+          <div><span>Revenue</span><b>{report.revenue}</b></div>
+          <div><span>Expenses</span><b>{report.expenses}</b></div>
+          <div><span>Mgmt fee</span><b>{report.fee}</b></div>
+          <div className="payout"><span>Owner payout</span><b>{report.payout}</b></div>
+        </div>
+        <div className="owner-report-lines">
+          <div><span>Vehicle</span><span>Revenue</span><span>Expenses</span><span>Fee</span><span>Payout</span></div>
+          {report.lines.map((line) => (
+            <div key={line.plate}><strong>{line.vehicle}<small>{line.plate}</small></strong><span>{line.revenue}</span><span>{line.expenses}</span><span>{line.fee}</span><b>{line.payout}</b></div>
+          ))}
+        </div>
+        <footer>
+          <span className={report.status.toLowerCase()}>{report.status} to send</span>
+          <button type="button" className="generate-button">Send statement</button>
+        </footer>
+      </article>
+    </div>
+  );
+}
+function OwnersPanel({ status, setStatus, onOpen }: { status: ReportStatus; setStatus: (status: ReportStatus) => void; onOpen: (owner: OwnerName) => void }) {
+  const rows: [OwnerName, string, string][] = [
     ["Daniel Reyes", "$4,280.16", "Ready"],
     ["Kelly Nguyen", "$3,842.90", "Ready"],
     ["Sofia Alvarez", "$2,190.44", "Review"],
@@ -346,10 +425,15 @@ function OwnersPanel({ status, setStatus }: { status: ReportStatus; setStatus: (
       <div className="payout-heading"><div><span className="app-overline">PAYOUTS</span><strong>$10,313.50 outstanding</strong></div><div className="table-controls" role="group" aria-label="Statement status"><button className={status === "all" ? "active" : ""} onClick={() => setStatus("all")}>All</button><button className={status === "ready" ? "active" : ""} onClick={() => setStatus("ready")}>Ready</button></div></div>
       <div className="owner-table">
         {visibleRows.map(([owner, amount, rowStatus]) => (
-          <article key={owner}><span className="owner-avatar">{ownerInitials(owner)}</span><strong>{owner}</strong><span>{amount}</span><b className={rowStatus.toLowerCase()}>{rowStatus}</b></article>
+          <article key={owner}>
+            <span className="owner-avatar">{ownerInitials(owner)}</span>
+            <button type="button" className="owner-name" onClick={() => onOpen(owner)}>{owner}</button>
+            <span>{amount}</span>
+            <button type="button" className={rowStatus.toLowerCase()} onClick={() => onOpen(owner)}>{rowStatus}</button>
+          </article>
         ))}
       </div>
-      <p className="demo-hint">Try it · filter statements by status</p>
+      <p className="demo-hint">Try it · open a name or Ready to preview the owner statement</p>
     </div>
   );
 }
@@ -380,6 +464,7 @@ function PhonePreview({
   setCheckoutNote,
   dateIndex,
   shiftDate,
+  onOpenStatement,
 }: {
   active: AppView;
   setActive: (feature: AppView) => void;
@@ -389,6 +474,7 @@ function PhonePreview({
   setKind: (kind: UploadKind) => void;
   status: ReportStatus;
   setStatus: (status: ReportStatus) => void;
+  onOpenStatement: (owner: OwnerName) => void;
 } & ScanProps & PhotoProps & Omit<DispatchProps, "photoSrc" | "photoName" | "onPhotoChange" | "setPickupLocation">) {
   const [mobileVehicles, setMobileVehicles] = useState(initialVehicles.slice(0, 4));
 
@@ -482,8 +568,9 @@ function PhonePreview({
               <button className={status === "ready" ? "active" : ""} onClick={() => setStatus("ready")}>Ready</button>
             </div>
             <div className="phone-payout"><span>Payout due</span><strong>$10,313.50</strong><small>2 statements ready to send</small></div>
-            <div className="phone-owner-row"><i>KN</i><div><strong>Kelly Nguyen</strong><small>$3,842.90</small></div><b>Ready</b></div>
-            {status === "all" && <div className="phone-owner-row"><i>SA</i><div><strong>Sofia Alvarez</strong><small>$2,190.44</small></div><b className="review">Review</b></div>}
+            <button type="button" className="phone-owner-row" onClick={() => onOpenStatement("Daniel Reyes")}><i>DR</i><div><strong>Daniel Reyes</strong><small>$4,280.16</small></div><b>Ready</b></button>
+            <button type="button" className="phone-owner-row" onClick={() => onOpenStatement("Kelly Nguyen")}><i>KN</i><div><strong>Kelly Nguyen</strong><small>$3,842.90</small></div><b>Ready</b></button>
+            {status === "all" && <button type="button" className="phone-owner-row" onClick={() => onOpenStatement("Sofia Alvarez")}><i>SA</i><div><strong>Sofia Alvarez</strong><small>$2,190.44</small></div><b className="review">Review</b></button>}
           </div>
         )}
 
@@ -514,12 +601,18 @@ export default function ProductShowcase() {
   const scrollyRef = useRef<HTMLElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
   const scrollRangeRef = useRef<{ start: number; end: number } | null>(null);
+  const clickNavRef = useRef(false);
+  const scrollToY = useRef<(y: number) => void>((y) => {
+    window.scrollTo({ top: y });
+    clickNavRef.current = false;
+  });
   const [active, setActive] = useState<FeatureId>("dispatch");
   const [appView, setAppView] = useState<AppView>("dispatch");
   const [metric, setMetric] = useState<Metric>("revenue");
   const [kind, setKind] = useState<UploadKind>("expense");
   const [scanStage, setScanStage] = useState<ScanStage>("idle");
   const [status, setStatus] = useState<ReportStatus>("all");
+  const [statementOwner, setStatementOwner] = useState<OwnerName | null>(null);
   const [photoSrc, setPhotoSrc] = useState<string | null>(null);
   const [photoName, setPhotoName] = useState("vehicle-photo.jpg");
   const [tripMode, setTripMode] = useState<TripMode>("checkin");
@@ -549,13 +642,14 @@ export default function ProductShowcase() {
     let teardown = () => {};
 
     const setup = async () => {
-      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+      const [{ gsap }, { ScrollTrigger }, { ScrollToPlugin }] = await Promise.all([
         import("gsap"),
         import("gsap/ScrollTrigger"),
+        import("gsap/ScrollToPlugin"),
       ]);
       if (cancelled) return;
 
-      gsap.registerPlugin(ScrollTrigger);
+      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
       const media = gsap.matchMedia();
 
       media.add(
@@ -576,9 +670,9 @@ export default function ProductShowcase() {
             invalidateOnRefresh: true,
             snap: {
               snapTo: 1 / (features.length - 1),
-              duration: { min: 0.22, max: 0.5 },
-              delay: 0.08,
-              ease: "power2.inOut",
+              duration: { min: 0.18, max: 0.32 },
+              delay: 0.04,
+              ease: "power2.out",
             },
             onRefresh: (self) => {
               scrollRangeRef.current = { start: self.start, end: self.end };
@@ -591,14 +685,27 @@ export default function ProductShowcase() {
               const nextFeature = features[index].id as FeatureId;
               section.style.setProperty("--showcase-progress", String(self.progress));
               section.dataset.step = String(index + 1);
+              if (clickNavRef.current) return;
               setActive((current) => (current === nextFeature ? current : nextFeature));
               setAppView((current) => (current === nextFeature ? current : nextFeature));
             },
           });
 
           scrollRangeRef.current = { start: trigger.start, end: trigger.end };
+          scrollToY.current = (y) => {
+            gsap.to(window, {
+              scrollTo: { y, autoKill: false },
+              duration: 0.34,
+              ease: "power2.out",
+              overwrite: true,
+              onComplete: () => {
+                clickNavRef.current = false;
+              },
+            });
+          };
           return () => {
             scrollRangeRef.current = null;
+            scrollToY.current = () => {};
             trigger.kill();
           };
         },
@@ -616,15 +723,18 @@ export default function ProductShowcase() {
   }, []);
 
   const selectFeature = (feature: FeatureId) => {
+    if (feature === active) return;
+    clickNavRef.current = true;
     setActive(feature);
     setAppView(feature);
     const index = features.findIndex((item) => item.id === feature);
     const range = scrollRangeRef.current;
-    if (!range) return;
-    window.scrollTo({
-      top: range.start + ((range.end - range.start) * index) / (features.length - 1),
-      behavior: "smooth",
-    });
+    if (!range) {
+      clickNavRef.current = false;
+      return;
+    }
+    const top = range.start + ((range.end - range.start) * index) / (features.length - 1);
+    scrollToY.current(top);
   };
 
   const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -674,12 +784,13 @@ export default function ProductShowcase() {
               {appView === "dispatch" && <DispatchPanel mode={tripMode} setMode={setTripMode} prepComplete={prepComplete} setPrepComplete={setPrepComplete} checkoutComplete={checkoutComplete} setCheckoutComplete={setCheckoutComplete} pickupLocation={pickupLocation} setPickupLocation={setPickupLocation} reports={tripReports} setReports={setTripReports} checkoutNote={checkoutNote} setCheckoutNote={setCheckoutNote} dateIndex={dateIndex} shiftDate={shiftDate} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} />}
               {appView === "performance" && <PerformancePanel metric={metric} setMetric={setMetric} />}
               {appView === "uploads" && <UploadPanel kind={kind} setKind={setKind} scanStage={scanStage} startScan={startScan} />}
-              {appView === "owners" && <OwnersPanel status={status} setStatus={setStatus} />}
+              {appView === "owners" && <OwnersPanel status={status} setStatus={setStatus} onOpen={setStatementOwner} />}
               {appView === "vehicles" && <VehiclesPanel photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} />}
             </div>
           </div>
-          <PhonePreview active={appView} setActive={setAppView} metric={metric} setMetric={setMetric} kind={kind} setKind={setKind} status={status} setStatus={setStatus} scanStage={scanStage} startScan={startScan} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} mode={tripMode} setMode={setTripMode} prepComplete={prepComplete} setPrepComplete={setPrepComplete} checkoutComplete={checkoutComplete} setCheckoutComplete={setCheckoutComplete} pickupLocation={pickupLocation} reports={tripReports} setReports={setTripReports} checkoutNote={checkoutNote} setCheckoutNote={setCheckoutNote} dateIndex={dateIndex} shiftDate={shiftDate} />
+          <PhonePreview active={appView} setActive={setAppView} metric={metric} setMetric={setMetric} kind={kind} setKind={setKind} status={status} setStatus={setStatus} scanStage={scanStage} startScan={startScan} photoSrc={photoSrc} photoName={photoName} onPhotoChange={handlePhotoChange} mode={tripMode} setMode={setTripMode} prepComplete={prepComplete} setPrepComplete={setPrepComplete} checkoutComplete={checkoutComplete} setCheckoutComplete={setCheckoutComplete} pickupLocation={pickupLocation} reports={tripReports} setReports={setTripReports} checkoutNote={checkoutNote} setCheckoutNote={setCheckoutNote} dateIndex={dateIndex} shiftDate={shiftDate} onOpenStatement={setStatementOwner} />
         </div>
+        {statementOwner && <OwnerReportModal owner={statementOwner} onClose={() => setStatementOwner(null)} />}
       </div>
     </div>
     </section>

@@ -87,8 +87,8 @@ const faqs = [
 function Logo() {
   return (
     <a className="brand" href="#top" aria-label="Autopus home">
-      <img src="/autopus/autopus-symbol-road.png" alt="" />
-      <span>Autopus</span>
+        <img src="/autopus/autopus-symbol-road.png" alt="" />
+        <span className="brand-name">Autopus</span>
     </a>
   );
 }
